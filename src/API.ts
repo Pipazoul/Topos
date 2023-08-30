@@ -56,6 +56,10 @@ export class UserAPI {
 
   constructor(public app: Editor) {}
 
+  // =============================================================
+  // Private functions
+  // =============================================================
+
   _loadUniverseFromInterface = (universe: string) => {
     this.app.loadUniverse(universe as string);
     this.app.openBuffersModal();
@@ -92,9 +96,9 @@ export class UserAPI {
   };
 
   _reportError = (error: any): void => {
-    console.log(error);
-    clearTimeout(this.errorTimeoutID);
-    clearTimeout(this.printTimeoutID);
+    [this.errorTimeoutID, this.printTimeoutID].forEach((id) =>
+      clearTimeout(id)
+    );
     this.app.error_line.innerHTML = error as string;
     this.app.error_line.style.color = "color-red-800";
     this.app.error_line.classList.remove("hidden");
@@ -105,9 +109,9 @@ export class UserAPI {
   };
 
   _logMessage = (message: any): void => {
-    console.log(message);
-    clearTimeout(this.printTimeoutID);
-    clearTimeout(this.errorTimeoutID);
+    [this.errorTimeoutID, this.printTimeoutID].forEach((id) =>
+      clearTimeout(id)
+    );
     this.app.error_line.innerHTML = message as string;
     this.app.error_line.style.color = "white";
     this.app.error_line.classList.remove("hidden");
@@ -201,6 +205,38 @@ export class UserAPI {
     });
   };
   s = this.script;
+
+  universe = (universe: string): void => {
+    /**
+     * Loads a universe programatically using a string.
+     * If the universe does not exist, it will be created.
+     */
+    this.app.loadUniverse(universe);
+  };
+
+  copy_universe = (from: string, to: string): void => {
+    /**
+     * Copies a universe to another universe. If the destination
+     * universe does not exist, it will be created.
+     *
+     * @remarks This function will overwrite the destination universe
+     * The destination universe will be deep copied from the origin
+     * universe.
+     */
+    let origin_universe = JSON.stringify(this.app.universes[from]);
+    this.app.universes[to] = JSON.parse(origin_universe);
+  };
+
+  delete_universe = (universe: string): void => {
+    /**
+     * Deletes a universe.
+     */
+    if (this.app.selected_universe === universe) {
+      // Move to another universe before deletion
+      this.app.loadUniverse("Default");
+    }
+    delete this.app.universes[universe];
+  };
 
   clear_script = (script: number): void => {
     /**
@@ -358,7 +394,7 @@ export class UserAPI {
     input: string,
     options: InputOptions = {},
     id: number | string = ""
-  ): Player =>  {
+  ): Player => {
     const zid = "z" + id.toString();
     const key = id === "" ? this.generateCacheKey(input, options) : zid;
 
@@ -1287,19 +1323,23 @@ export class UserAPI {
 
   abs = Math.abs;
 
-
   // =============================================================
   // Speech synthesis
   // =============================================================
 
-  speak = (text: string, voice: number, rate: number = 1, pitch: number = 1): void => {
-    /* 
+  speak = (
+    text: string,
+    voice: number,
+    rate: number = 1,
+    pitch: number = 1
+  ): void => {
+    /*
      * Speaks the given text using the browser's speech synthesis API.
      * @param text - The text to speak
      * @param voice - The index of the voice to use
      * @param rate - The rate at which to speak the text
      * @param pitch - The pitch at which to speak the text
-     * 
+     *
      */
     const synth = window.speechSynthesis;
     synth.cancel();

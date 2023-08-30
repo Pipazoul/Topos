@@ -5,7 +5,7 @@ const key_shortcut = (shortcut: string): string => {
 };
 
 const samples_to_markdown = (application: Editor) => {
-	let samples = application.api._all_samples();
+  let samples = application.api._all_samples();
   let markdownList = "";
   let keys = Object.keys(samples);
   let i = -1;
@@ -18,15 +18,17 @@ const samples_to_markdown = (application: Editor) => {
     //  //@ts-ignore
     //  samples[keys[i]].data.samples.length
     //}_) `;
-		//
-		
-		// Adding new examples for each sample folder!
-    const codeId = `sampleExample${i}`;
-    application.api.codeExamples[codeId] = `sound("${keys[i]}").n(irand(1, 5)).end(1).out()`;
-		// @ts-ignore
-		const howMany = samples[keys[i]].data.samples.length;
+    //
 
-		markdownList += `
+    // Adding new examples for each sample folder!
+    const codeId = `sampleExample${i}`;
+    application.api.codeExamples[
+      codeId
+    ] = `sound("${keys[i]}").n(irand(1, 5)).end(1).out()`;
+    // @ts-ignore
+    const howMany = samples[keys[i]].data.samples.length;
+
+    markdownList += `
 <button 
 	class="hover:bg-neutral-500 inline px-4 py-2 bg-neutral-700 text-orange-300 text-xl"
 	onclick="app.api._playDocExampleOnce(app.api.codeExamples['${codeId}'])"
@@ -39,7 +41,7 @@ ${keys[i]}
 };
 
 const injectAvailableSamples = (application: Editor): string => {
-	let generatedPage = samples_to_markdown(application);
+  let generatedPage = samples_to_markdown(application);
   return generatedPage;
 };
 
@@ -81,7 +83,8 @@ Welcome to the Topos documentation. These pages are offering you an introduction
   )}.  Press again to make the documentation disappear. All your contributions are welcome!
 
 ${makeExample(
-  "Welcome! Eval to get started", `
+  "Welcome! Eval to get started",
+  `
 
 	
 bpm(110)
@@ -232,7 +235,11 @@ A set of files is called a _universe_. Topos can store several universes and swi
 Switching between universes will not stop the transport nor reset the clock. You are switching the context but time keeps flowing. This can be useful to prepare immediate transitions between songs and parts. Think of universes as an algorithmic set of music. All scripts in a given universe are aware about how many times they have been runned already. You can reset that value programatically.
 	
 You can clear the current universe by pressing the flame button on the top right corner of the interface. This will clear all the scripts and the note file. **Note:** there is no shortcut for clearing a universe. We do not want to loose your work by mistake!
-	
+
+There are three functions you can use to manipulate your universes programatically:
+- <icode>load_universe(universe: string)</icode>: loads the selected universe immediately.
+- <icode>copy_universe(from: string, to: string)</icode>: copies the universe to another universe.
+- <icode>delete_universe(universe: string)</icode>: deletes the selected universe. You will be brought back to the <icode>Default</icode> universe if you are currently inhabiting the selected universe.
 # Sharing your work
 	
 **Click on the Topos logo in the top bar**. Your URL will change to something much longer and complex. The same URL will be copied to your clipboard. Send this link to your friends to share the universe you are currently working on with them. 
@@ -287,8 +294,8 @@ mod([1,0.75].div(2)) :: blip([50, 100].div(2)).out();
 - <icode>modp(...n: number[])</icode>: extreme version of the <icode>mod</icode> function. Instead of being normalised, this function is returning a modulo of real pulses! It can be used to break out of ratios and play with real clock pulses for unexpected results.
 
 ${makeExample(
-"Intriguing rhythms",
-`
+  "Intriguing rhythms",
+  `
 modp(36) :: snd('east')
   .n([2,4].div(1)).out()
 modp([12, 36].div(4)) :: snd('east')
@@ -297,11 +304,13 @@ modp([12, 36].div(4)) :: snd('east')
   true
 )}
 ${makeExample(
-"modp is the OG rhythmic function in Topos",
-`
+  "modp is the OG rhythmic function in Topos",
+  `
 modp([48, 24, 16].div(4)) :: sound('linnhats').out()
 mod(1)::snd('bd').out()
-`, false)};
+`,
+  false
+)};
 
 - <icode>onbeat(...n: number[])</icode>: By default, the bar is set in <icode>4/4</icode> with four beats per bar. The <icode>onbeat</icode> function allows you to lock on to a specific beat to execute some code. It can accept multiple arguments. It's usage is very straightforward and not hard to understand. You can pass integers or floating point numbers.
 
@@ -368,8 +377,8 @@ mod(.25) && euclid($(4), 7, 9, 1) && snd('hh').out()
 
 - <icode>rhythm(divisor: number, pulses: number, length: number, rotate: number): boolean</icode>: generates <icode>true</icode> or <icode>false</icode> values from an euclidian rhythm sequence. This is another version of <icode>euclid</icode> that does not take an iterator.
 ${makeExample(
-"rhythm is a beginner friendly rhythmic function!",
-`
+  "rhythm is a beginner friendly rhythmic function!",
+  `
 let speed = [0.5, 0.25].div(8);
 rhythm(speed, 5, 12) :: snd('east').n(2).out()
 rhythm(speed, 2, 12) :: snd('east').out()
@@ -502,11 +511,13 @@ divbar(3)::mod(.5)::snd('hat').out()
 )}
 ${makeExample(
   "Alternating over four bars",
-`
+  `
 divbar(2)
   ? mod(.5) && snd(['kick', 'hh'].div(1)).out()
   : mod(.5) && snd(['east', 'snare'].div(1)).out()
-`, false)};
+`,
+  false
+)};
 
 	
 - <icode>onbar(bars: number | number[], n: number)</icode>: The second argument, <icode>n</icode>, is used to divide the time in a period of <icode>n</icode> consecutive bars. The first argument should be a bar number or a list of bar numbers to play on. For example, <icode>onbar([1, 4], 5)</icode> will return <icode>true</icode> on bar <icode>1</icode> and <icode>4</icode> but return <icode>false</icode> the rest of the time. You can easily divide time that way.
@@ -581,22 +592,30 @@ You can use Topos to play MIDI thanks to the [WebMIDI API](https://developer.moz
 
 Your web browser is capable of sending and receiving MIDI information through the [Web MIDI API](https://developer.mozilla.org/en-US/docs/Web/API/Web_MIDI_API). The support for MIDI on browsers is a bit shaky. Please, take some time to configure and test. To our best knowledge, **Chrome** is currently leading on this feature, followed closely by **Firefox**. The other major web browsers are also starting to support this API. **There are two important functions for configuration:**
 
-- <icode>midi_outputs()</icode>: prints the list of available MIDI devices on the screen. You will have to open the web console using ${key_shortcut("Ctrl+Shift+I")} or sometimes ${key_shortcut("F12")}. You can also open it from the menu of your web browser. **Note:** close the docs to see it printed.
+- <icode>midi_outputs()</icode>: prints the list of available MIDI devices on the screen. You will have to open the web console using ${key_shortcut(
+    "Ctrl+Shift+I"
+  )} or sometimes ${key_shortcut(
+    "F12"
+  )}. You can also open it from the menu of your web browser. **Note:** close the docs to see it printed.
 
 
 ${makeExample(
-	"Listing MIDI outputs",
-`
+  "Listing MIDI outputs",
+  `
 midi_outputs()
-`, true)}
+`,
+  true
+)}
 
 - <icode>midi_output(output_name: string)</icode>: enter your desired output to connect to it.
 
 ${makeExample(
-	"Listing MIDI outputs",
-`
+  "Listing MIDI outputs",
+  `
 midi_output("MIDI Rocket-Trumpet")
-`, true)}
+`,
+  true
+)}
 
 That's it! You are now ready to play with MIDI.
 
@@ -607,26 +626,32 @@ The most basic MIDI event is the note. MIDI notes traditionally take three param
 - <icode>midi(note: number|object)</icode>: send a MIDI Note. This function is quite bizarre. It can be written and used in many different ways. You can pass form one up to three arguments in different forms.
 	
 ${makeExample(
-	"MIDI note using one parameter: note",
-`
+  "MIDI note using one parameter: note",
+  `
 // Configure your MIDI first! 
 // => midi_output("MIDI Bus 1")
 rhythm(.5, 5, 8) :: midi(50).out()
-`, true)}
+`,
+  true
+)}
 
 ${makeExample(
-	"MIDI note using three parameters: note, velocity, channel",
-`
+  "MIDI note using three parameters: note, velocity, channel",
+  `
 // MIDI Note 50, Velocity 50 + LFO, Channel 0
 rhythm(.5, 5, 8) :: midi(50, 50 + usine(.5) * 20, 0).out()
-`, false)}
+`,
+  false
+)}
 
 ${makeExample(
-	"MIDI note by passing an object",
-`
+  "MIDI note by passing an object",
+  `
 // MIDI Note 50, Velocity 50 + LFO, Channel 0
 rhythm(.5, 5, 8) :: midi({note: 50, velocity: 50 + usine(.5) * 20, channel: 0}).out()
-`, false)}
+`,
+  false
+)}
 
 We can now have some fun and starting playing a small piano piece:
 
@@ -673,7 +698,7 @@ program_change([1,2,3,4,5,6,7,8].pick(), 1)
 
 ${makeExample(
   "Nobody can say that we don't support Sysex messages!",
-`
+  `
 sysex(0x90, 0x40, 0x7f)
 `,
   true
@@ -1173,11 +1198,7 @@ mod(1)::snd('sine').sustain(0.1).freq([100,100,100,100,200].unique().beat()).out
 - <icode>mult()</icode>: add a given amount to every list element.
 - <icode>division()</icode>: add a given amount to every list element. The method is named <icode>division</icode> because obviously <icode>div</icode> is already taken.
 
-${makeExample(
-"Simple addition",
-`[1, 2 ,3].add(2).beat()`,
-true
-)}
+${makeExample("Simple addition", `[1, 2 ,3].add(2).beat()`, true)}
 
 ## Simple patterns 
 	
@@ -1185,7 +1206,7 @@ true
 
 `;
 
-const ziffers: string = `
+  const ziffers: string = `
 # Ziffers
 	
 Ziffers is a **musical number based notation** tuned for _live coding_. It is a very powerful and flexible notation for describing musical patterns in very few characters. Number based musical notation has a long history and has been used for centuries as a shorthand technique for music notation. Amiika has written [papers](https://zenodo.org/record/7841945) and other documents describing his system. It is currently implemented for many live coding platforms including [Sardine](https://sardine.raphaelforment.fr) (Raphaël Forment) and [Sonic Pi](https://sonic-pi.net/) (Sam Aaron). Ziffers can be used for:
@@ -1194,9 +1215,7 @@ Ziffers is a **musical number based notation** tuned for _live coding_. It is a 
 - exploring **generative / aleatoric / stochastic** melodies and applying them to sounds and synths.
 - embracing a different mindset and approach to time and **patterning**.
 
-${makeExample(
-	"Super Fancy Ziffers example",
-``, true)}
+${makeExample("Super Fancy Ziffers example", ``, true)}
 
 ## Notation
 
@@ -1215,42 +1234,52 @@ The basic Ziffer notation is entirely written in JavaScript strings (_e.g_ <icod
 
 
 ${makeExample(
-	"Pitches from 0 to 9",
-`
+  "Pitches from 0 to 9",
+  `
 z1('s 0 1 2 3 4 5 6 7 8 9').sound('pluck').release(0.1).sustain(0.25).out()
-`, true)}
+`,
+  true
+)}
 
 ${makeExample(
-	"Escaped pitches using curly brackets",
-`
+  "Escaped pitches using curly brackets",
+  `
 let pattern = div(4) ? z1('s _ _ 0 0 {9 11}') : z1('s _ 0 0 {10 12}');
 pattern.sound('pluck').sustain(0.1).room(0.9).out();
-`, false)}
+`,
+  false
+)}
 
 ${makeExample(
-	"Durations using letters and floating point numbers",
-`
+  "Durations using letters and floating point numbers",
+  `
 div(8) ? z1('s 0 e 1 q 2 h 3 w 4').sound('sine').scale("locrian").out()
 	   : z1('0.125 0 0.25 2').sound('sine').scale("locrian").out()
-`, false)}
+`,
+  false
+)}
 
 ${makeExample(
-	"Disco was invented thanks to Ziffers",
-`
+  "Disco was invented thanks to Ziffers",
+  `
 z1('e _ _ 0 ^ 0 _ 0 ^ 0').sound('jvbass').out()
 mod(1)::snd('bd').out(); mod(2)::snd('sd').out()
 mod(3) :: snd('cp').room(0.5).size(0.5).orbit(2).out()
-`, false)}
+`,
+  false
+)}
 
 ${makeExample(
-	"Accidentals and rests for nice melodies",
-`
+  "Accidentals and rests for nice melodies",
+  `
 z1('e 0 s 1 b2 3 e 0 s 1 b2 4')
   .scale('major').sound('sine')
   .fmi(usine(.5)).fmh(2)
   .delay(0.5).delayt(1.25)
   .sustain(0.1).out()
-`, false)}
+`,
+  false
+)}
 
 
 ## Algorithmic operations
@@ -1260,24 +1289,28 @@ Ziffers provides shorthands for **many** numeric and algorithimic operations suc
 * **List operations:** Cartesian operation (_e.g._ <icode>(3 2 1)+(2 5)</icode>) using the <icode>+</icode> operator. All the arithmetic operators are supported.
 
 ${makeExample(
-	"Cartesian operation for melodic generation",
-`
+  "Cartesian operation for melodic generation",
+  `
 z1("q 0 s (3 2 1)+(2 5) q 0 s (4 5 6)-(2 3)").sound('sine')
   .scale('minor').fmi(2).fmh(2).room(0.5).size(0.5).sustain(0.1)
   .delay(0.5).delay(0.125).delayfb(0.25).out();
-`, true)}
+`,
+  true
+)}
 
 * **Random numbers:** <icode>(4,6)</icode> Random number between 4 and 6
 
 ${makeExample(
-	"Random numbers, true computer music at last!",
-`
+  "Random numbers, true computer music at last!",
+  `
 z1("s (0,8) 0 0 (0,5) 0 0").sound('sine')
   .scale('minor').fmi(2).fmh(2).room(0.5)
 	.size(0.5).sustain(0.1) .delay(0.5)
 	.delay(0.125).delayfb(0.25).out();
 mod(.5) :: snd(['kick', 'hat'].div(.5)).out()
-`, true)}
+`,
+  true
+)}
 
 ## Keys and scales
 
@@ -1298,14 +1331,16 @@ Ziffers supports all the keys and scales. Keys can be defined by using [scientif
 | ... | And it goes on for **1490** scales |
 
 ${makeExample(
-	"What the hell is the Modimic scale?",
-`
+  "What the hell is the Modimic scale?",
+  `
 z1("s (0,8) 0 0 (0,5) 0 0").sound('sine')
   .scale('modimic').fmi(2).fmh(2).room(0.5)
 	.size(0.5).sustain(0.1) .delay(0.5)
 	.delay(0.125).delayfb(0.25).out();
 mod(.5) :: snd(['kick', 'hat'].div(.5)).out()
-`, true)}
+`,
+  true
+)}
 
 
 
@@ -1329,14 +1364,16 @@ You can also use more traditional <a href="https://ianring.com/musictheory/scale
 
 
 ${makeExample(
-	"Let's fall back to a classic blues minor scale",
-`
+  "Let's fall back to a classic blues minor scale",
+  `
 z1("s (0,8) 0 0 (0,5) 0 0").sound('sine')
   .scale('blues minor').fmi(2).fmh(2).room(0.5)
 	.size(0.5).sustain(0.25).delay(0.25)
 	.delay(0.25).delayfb(0.5).out();
 mod(1, 1.75) :: snd(['kick', 'hat'].div(1)).out()
-`, true)}
+`,
+  true
+)}
 
 Microtonal scales can be defined using <a href="https://www.huygens-fokker.org/scala/scl_format.html" target="_blank">Scala format</a> or by extended notation defined by Sevish <a href="https://sevish.com/scaleworkshop/" target="_blank">Scale workshop</a>, for example:
 
@@ -1345,14 +1382,16 @@ Microtonal scales can be defined using <a href="https://www.huygens-fokker.org/s
 
 
 ${makeExample(
-	"Wendy Carlos, here we go!",
-`
+  "Wendy Carlos, here we go!",
+  `
 z1("s ^ (0,8) 0 0 _ (0,5) 0 0").sound('sine')
   .scale('17/16 9/8 6/5 5/4 4/3 11/8 3/2 13/8 5/3 7/4 15/8 2/1').fmi(2).fmh(2).room(0.5)
 	.size(0.5).sustain(0.15).delay(0.1)
 	.delay(0.25).delayfb(0.5).out();
 mod(1, 1.75) :: snd(['kick', 'hat'].div(1)).out()
-`, true)}
+`,
+  true
+)}
 
 ## Synchronization
 
@@ -1465,7 +1504,6 @@ z1('q (0 3 1 5)+(2 5) e (0 5 2)*(2 3) (0 5 2)>>(2 3) (0 5 2)%(2 3)').sound('sine
 )}
 
 `;
-
 
   const synths: string = `
 # Synthesizers
@@ -1744,17 +1782,21 @@ By default, each script is independant from each other. Scripts live in their ow
 **Note:** since this example is running in the documentation, we cannot take advantage of the multiple scripts paradigm. Try to send a variable from the global file to the local file n°6.
 
 ${makeExample(
-	"Setting a global variable",
-`
+  "Setting a global variable",
+  `
 v('my_cool_variable', 2)
-`, true)}
+`,
+  true
+)}
 
 ${makeExample(
-	"Getting that variable back and printing!",
-`
+  "Getting that variable back and printing!",
+  `
 // Note that we just use one argument
 log(v('my_cool_variable'))
-`, false)}
+`,
+  false
+)}
 
 
 ## Counter and iterators
@@ -1773,24 +1815,30 @@ You will often need to use iterators and/or counters to index over data structur
 **Note:** Counters also come with a secret syntax. They can be called with the **$** symbol!
 
 ${makeExample(
-	"Iterating over a list of samples using a counter",
-`
+  "Iterating over a list of samples using a counter",
+  `
 rhythm(.25, 6, 8) :: sound('dr').n($(1)).end(.25).out()
-`, true)}
+`,
+  true
+)}
 
 ${makeExample(
-	"Using a more complex counter",
-`
+  "Using a more complex counter",
+  `
 // Limit is 20, step is 5
 rhythm(.25, 6, 8) :: sound('dr').n($(1, 20, 5)).end(.25).out()
-`, false)}
+`,
+  false
+)}
 
 ${makeExample(
-	"Calling the drunk mechanism",
-`
+  "Calling the drunk mechanism",
+  `
 // Limit is 20, step is 5
 rhythm(.25, 6, 8) :: sound('dr').n(drunk()).end(.25).out()
-`, false)}
+`,
+  false
+)}
 
 ## Scripts
 	
@@ -1801,16 +1849,20 @@ You can control scripts programatically. This is the core concept of Topos after
 - <icode>copy_script(from: number, to: number)</icode>: copies a local script denoted by its number to another local script. **This is a destructive operation!**
 
 ${makeExample(
-	"Calling a script! The most important feature!",
-`
+  "Calling a script! The most important feature!",
+  `
 mod(1) :: script(1)
-`, true)}
+`,
+  true
+)}
 
 ${makeExample(
-	"Calling mutliple scripts at the same time.",
-`
+  "Calling mutliple scripts at the same time.",
+  `
 mod(1) :: script(1, 3, 5)
-`, false)}
+`,
+  false
+)}
 
 
 	
@@ -1822,14 +1874,16 @@ You can get the current position of the mouse on the screen by using the followi
 - <icode>mouseY()</icode>: the vertical position of the mouse on the screen (as a floating point number).
 	
 ${makeExample(
-	"FM Synthesizer controlled using the mouse",
-`
+  "FM Synthesizer controlled using the mouse",
+  `
 mod(.25) :: sound('sine')
   .fmi(mouseX() / 100)
   .fmh(mouseY() / 100)
   .vel(0.2)
   .room(0.9).out()
-`, true)}
+`,
+  true
+)}
 
 Current mouse position can also be used to generate notes:
 	
@@ -1838,15 +1892,17 @@ Current mouse position can also be used to generate notes:
 	
 
 ${makeExample(
-	"The same synthesizer, with note control!",
-`
+  "The same synthesizer, with note control!",
+  `
 mod(.25) :: sound('sine')
   .fmi(mouseX() / 100)
   .note(noteX())
   .fmh(mouseY() / 100)
   .vel(0.2)
   .room(0.9).out()
-`, true)}
+`,
+  true
+)}
 
 ## Low Frequency Oscillators
 	
@@ -1856,37 +1912,47 @@ Low Frequency Oscillators (_LFOs_) are an important piece in any digital audio w
 - <icode>usine(freq: number = 1, offset: number= 0): number</icode>: returns a sinusoïdal oscillation between <icode>0</icode> and <icode>1</icode>. The <icode>u</icode> stands for _unipolar_.
 	
 ${makeExample(
-	"Modulating the speed of a sample player using a sine LFO", 
-`mod(.25) && snd('cp').speed(1 + usine(0.25) * 2).out()`, true)};
+  "Modulating the speed of a sample player using a sine LFO",
+  `mod(.25) && snd('cp').speed(1 + usine(0.25) * 2).out()`,
+  true
+)};
 
 - <icode>triangle(freq: number = 1, offset: number= 0): number</icode>: returns a triangle oscillation between <icode>-1</icode> and <icode>1</icode>.
 - <icode>utriangle(freq: number = 1, offset: number= 0): number</icode>: returns a triangle oscillation between <icode>0</icode> and <icode>1</icode>. The <icode>u</icode> stands for _unipolar_.
 	
 
 ${makeExample(
-	"Modulating the speed of a sample player using a triangle LFO", 
-`mod(.25) && snd('cp').speed(1 + utriangle(0.25) * 2).out()`, true)}
+  "Modulating the speed of a sample player using a triangle LFO",
+  `mod(.25) && snd('cp').speed(1 + utriangle(0.25) * 2).out()`,
+  true
+)}
 	
 - <icode>saw(freq: number = 1, offset: number= 0): number</icode>: returns a sawtooth-like oscillation between <icode>-1</icode> and <icode>1</icode>.
 - <icode>usaw(freq: number = 1, offset: number= 0): number</icode>: returns a sawtooth-like oscillation between <icode>0</icode> and <icode>1</icode>. The <icode>u</icode> stands for _unipolar_.
 	
 
 ${makeExample(
-	"Modulating the speed of a sample player using a saw LFO", 
-`mod(.25) && snd('cp').speed(1 + usaw(0.25) * 2).out()`, true)}
+  "Modulating the speed of a sample player using a saw LFO",
+  `mod(.25) && snd('cp').speed(1 + usaw(0.25) * 2).out()`,
+  true
+)}
 	
 - <icode>square(freq: number = 1, offset: number= 0, duty: number = .5): number</icode>: returns a square wave oscillation between <icode>-1</icode> and <icode>1</icode>. You can also control the duty cycle using the <icode>duty</icode> parameter.
 - <icode>usquare(freq: number = 1, offset: number= 0, duty: number = .5): number</icode>: returns a square wave oscillation between <icode>0</icode> and <icode>1</icode>. The <icode>u</icode> stands for _unipolar_. You can also control the duty cycle using the <icode>duty</icode> parameter.
 	
 ${makeExample(
-	"Modulating the speed of a sample player using a square LFO", 
-`mod(.25) && snd('cp').speed(1 + usquare(0.25, 0, 0.25) * 2).out()`,true)};
+  "Modulating the speed of a sample player using a square LFO",
+  `mod(.25) && snd('cp').speed(1 + usquare(0.25, 0, 0.25) * 2).out()`,
+  true
+)};
 	
 - <icode>noise()</icode>: returns a random value between -1 and 1.
 	
 ${makeExample(
-	"Modulating the speed of a sample player using noise", 
-`mod(.25) && snd('cp').speed(1 + noise() * 2).out()`, true)};
+  "Modulating the speed of a sample player using noise",
+  `mod(.25) && snd('cp').speed(1 + noise() * 2).out()`,
+  true
+)};
 	
 ## Probabilities
 
@@ -1896,10 +1962,12 @@ There are some simple functions to play with probabilities.
 - <icode>irand(min: number, max:number)</icode>: returns a random integer between <icode>min</icode> and <icode>max</icode>. Shorthands _ir()_ or _rI()_.
 
 ${makeExample(
-	"Bleep bloop, what were you expecting?",
-`
+  "Bleep bloop, what were you expecting?",
+  `
 rhythm(0.125, 10, 16) :: sound('sid').n(4).note(50 + irand(50, 62) % 8).out()
-`, true)}
+`,
+  true
+)}
 
 
 - <icode>prob(p: number)</icode>: return <icode>true</icode> _p_% of time, <icode>false</icode> in other cases.
@@ -1907,12 +1975,14 @@ rhythm(0.125, 10, 16) :: sound('sid').n(4).note(50 + irand(50, 62) % 8).out()
 
 
 ${makeExample(
-	"The Teletype experience!",
-`
+  "The Teletype experience!",
+  `
 prob(50) :: script(1);
 prob(60) :: script(2);
 prob(80) :: script(toss() ? script(3) : script(4))
-`, true)}
+`,
+  true
+)}
 
 - <icode>seed(val: number|string)</icode>: sets the seed of the random number generator. You can use a number or a string. The same seed will always return the same sequence of random numbers.
 
@@ -1942,21 +2012,25 @@ Chance operators returning a boolean value are also available. They are super im
 - <icode>delay(ms: number, func: Function): void</icode>: Delays the execution of a function by a given number of milliseconds.
 
 ${makeExample(
-	"Phased woodblocks",
-`
+  "Phased woodblocks",
+  `
 // Some very low-budget version of phase music
 mod(.5) :: delay(usine(.125) * 80, () => sound('east').out())
 mod(.5) :: delay(50, () => sound('east').out())
-`, true)}
+`,
+  true
+)}
 
 - <icode>delayr(ms: number, nb: number, func: Function): void</icode>: Delays the execution of a function by a given number of milliseconds, repeated a given number of times.
 
 ${makeExample(
-	"Another woodblock texture",
-`
+  "Another woodblock texture",
+  `
 mod(1) :: delayr(50, 4, () => sound('east').speed([0.5,.25].beat()).out())
 div(2) :: mod(2) :: delayr(150, 4, () => sound('east').speed([0.5,.25].beat() * 4).out())
-`, true)};
+`,
+  true
+)};
 `;
 
   const reference: string = `
@@ -1972,19 +2046,29 @@ Topos is made to be controlled entirely with a keyboard. It is recommanded to st
 
 | Shortcut | Key   | Description                                                |
 |----------|-------|------------------------------------------------------------|
-|**Start/Pause** transport|${key_shortcut("Ctrl + P")}|Start or pause audio playback|
-|**Stop** the transport |${key_shortcut("Ctrl + S")}|Stop and rewind audio playback|
+|**Start/Pause** transport|${key_shortcut(
+    "Ctrl + P"
+  )}|Start or pause audio playback|
+|**Stop** the transport |${key_shortcut(
+    "Ctrl + S"
+  )}|Stop and rewind audio playback|
 	
 ## Moving in the interface
 
 | Shortcut | Key   | Description                                                |
 |----------|-------|------------------------------------------------------------|
 |Universe switch|${key_shortcut("Ctrl + B")}|Switch to a new universe|
-|Global Script|${key_shortcut("Ctrl + G")} or ${key_shortcut("F10")}|Switch to global script |
-|Local scripts|${key_shortcut("Ctrl + L")} or ${key_shortcut("F11")}|Switch to local scripts |
+|Global Script|${key_shortcut("Ctrl + G")} or ${key_shortcut(
+    "F10"
+  )}|Switch to global script |
+|Local scripts|${key_shortcut("Ctrl + L")} or ${key_shortcut(
+    "F11"
+  )}|Switch to local scripts |
 |Init script|${key_shortcut("Ctrl + L")}|Switch to init script|
 |Note File|${key_shortcut("Ctrl + N")}|Switch to note file|
-|Local Script|${key_shortcut("F1")} to ${key_shortcut("F9")}|Switch to a specific local script|
+|Local Script|${key_shortcut("F1")} to ${key_shortcut(
+    "F9"
+  )}|Switch to a specific local script|
 |Documentation|${key_shortcut("Ctrl + D")}|Open the documentation|
 	
 ## Evaluating code
@@ -1992,7 +2076,9 @@ Topos is made to be controlled entirely with a keyboard. It is recommanded to st
 | Shortcut | Key   | Description                                                |
 |----------|-------|------------------------------------------------------------|
 |Evaluate|${key_shortcut("Ctrl + Enter")}| Evaluate the current script        |
-|Local Eval|${key_shortcut("Ctrl + F1")} to ${key_shortcut("Ctrl + F9")}|Local File Evaluation|
+|Local Eval|${key_shortcut("Ctrl + F1")} to ${key_shortcut(
+    "Ctrl + F9"
+  )}|Local File Evaluation|
 	
 ## Special
 
@@ -2001,7 +2087,7 @@ Topos is made to be controlled entirely with a keyboard. It is recommanded to st
 |Vim Mode|${key_shortcut("Ctrl + V")}| Switch between Vim and Normal Mode|
 `;
 
-	const chaining: string = `
+  const chaining: string = `
 # Chaining
 
 Method chaining can be used to manipulate objects returned by both <icode>sound()</icode> and <icode>midi()</icode> functions. Think of it as another way to create interesting musical patterns! Method chaining, unlike patterns, is acting on the sound chain level and is not really dependant on time. You can combine chaining and good old patterns if you want!
@@ -2012,34 +2098,40 @@ Probability functions can be chained to apply different modifiers randomly. Prob
 
 All functions from the sound object can be used to modify the event, for example:
 ${makeExample(
-	"Modifying sound events with probabilities", 
-`
+  "Modifying sound events with probabilities",
+  `
 mod(.5) && sound('numbers')
   .odds(1/4, s => s.speed(irand(1,4)))
   .rarely(s => s.crush(3))
   .out()
-`, true)}
+`,
+  true
+)}
 ${makeExample(
-    "Chance to change to a different note", 
+  "Chance to change to a different note",
   `
 rhythm(.5, 3, 8) && sound('pluck').note(38).out()
 mod(.5) && sound('pluck').note(60)
   .often(s => s.note(57))
   .sometimes(s => s.note(64).n(irand(1,4)))
   .note(62)
-  .out()`, false)}
+  .out()`,
+  false
+)}
 
 ## Chaining midi events
 
 All the functions from the MIDI object can be used to modify the event with probabilities. Values can also be incremented using <icode>+=</icode> notation.
 
 ${makeExample(
-"Modifying midi events with probabilities", 
-`mod(.5) && midi(60).channel(1)
+  "Modifying midi events with probabilities",
+  `mod(.5) && midi(60).channel(1)
   .odds(1/4, n => n.channel(2))
   .often(n => n.note+=4)
   .sometimes(s => s.velocity(irand(50,100)))
-  .out()`, true)};
+  .out()`,
+  true
+)};
 
 ## Ziffers
 
@@ -2052,15 +2144,17 @@ Ziffers patterns can be chained to <icode>sound()</icode> and <icode>midi()</ico
 * <icode>midi()</icode> - for outputting pattern as MIDI (See **MIDI**)
 
 ${makeExample(
-"Ziffer player using a sound chain and probabilities!", 
-`
+  "Ziffer player using a sound chain and probabilities!",
+  `
 z1('s 0 5 7 0 3 7 0 2 7 0 1 7 0 1 6 5 4 3 2')
   .octave([0, 1].div(2) - 1)
   .scale('pentatonic').sound('pluck')
   .odds(1/4, n => n.delay(0.5).delayt(0.25))
   .odds(1/2, n => n.speed(0.5))
   .room(0.5).size(0.5).out()
-`, true)};
+`,
+  true
+)};
 `;
 
   return {
@@ -2071,7 +2165,7 @@ z1('s 0 5 7 0 3 7 0 2 7 0 1 7 0 1 6 5 4 3 2')
     sound: sound,
     samples: samples,
     synths: synths,
-		chaining: chaining,
+    chaining: chaining,
     patterns: patterns,
     ziffers: ziffers,
     midi: midi,
