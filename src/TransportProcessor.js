@@ -5,10 +5,6 @@ class TransportProcessor extends AudioWorkletProcessor {
         this.port.addEventListener("message", this.handleMessage);
         this.port.start();
         this.started = false;
-        this.totalPausedTime = 0;
-        this.lastPausedTime = 0;
-        this.startedAgainTime = 0;
-        this.wasStopped = false;
         this.bpm = 120;
         this.ppqn = 48;
         this.currentPulsePosition = 0;
@@ -21,11 +17,9 @@ class TransportProcessor extends AudioWorkletProcessor {
             this.started = true;
        } else if(message.data === "pause") {
             this.started = false;
-            if(this.lastPausedTime === 0) {
-                this.lastPausedTime = currentTime;
-            }
         } else if(message.data === "stop") {
             this.started = false;
+<<<<<<< Updated upstream
             this.totalPausedTime = 0;
             this.lastPausedTime = 0;
             this.wasStopped = true;
@@ -33,29 +27,23 @@ class TransportProcessor extends AudioWorkletProcessor {
         } else if(message.data === 'bpm') {
             this.bpm = message.data.value;
         } else if(message.data === 'ppqn') {
+=======
+        } else if(message.data.type === 'bpm') {
+            this.bpm = message.data.value;
+            this.currentPulsePosition = 0;
+        } else if(message.data.type === 'ppqn') {
+>>>>>>> Stashed changes
             this.ppqn = message.data.value;
         }
     };
 
     process(inputs, outputs, parameters) {
         if (this.started) {
-            if(this.lastPausedTime>0) {
-                const pausedTime = currentTime-this.lastPausedTime;
-                this.totalPausedTime += pausedTime;
-                this.lastPausedTime = 0;
-            }
-            if(this.wasStopped) {
-                this.startedAgainTime = currentTime;
-                this.wasStopped = false;
-            }
-
-            const logicalTime = currentTime-this.totalPausedTime-this.startedAgainTime;
-            const beatNumber = logicalTime / (60 / this.bpm);
+            const beatNumber = currentTime / (60 / this.bpm);
             const currentPulsePosition = Math.ceil(beatNumber * this.ppqn);
-
             if(currentPulsePosition > this.currentPulsePosition) {
                 this.currentPulsePosition = currentPulsePosition;
-                this.port.postMessage({ type: "bang", logicalTime });
+                this.port.postMessage({ type: "bang" });
             }
         }
         return true;

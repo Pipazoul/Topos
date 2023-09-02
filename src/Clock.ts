@@ -118,8 +118,10 @@ export class Clock {
   }
 
   set bpm(bpm: number) {
-    this._bpm = bpm;
-    this.transportNode?.setBPM(bpm);
+    if(this.bpm !== bpm) {
+      this._bpm = bpm;
+      this.transportNode?.setBPM(bpm);
+    }
   }
 
   get ppqn(): number {
@@ -127,8 +129,10 @@ export class Clock {
   }
 
   set ppqn(ppqn: number) {
-    this._ppqn = ppqn;
-    this.transportNode?.setPPQN(ppqn);
+    if(this._ppqn !== ppqn) {
+      this._ppqn = ppqn;
+      this.transportNode?.setPPQN(ppqn);
+    }
   }
 
   public convertPulseToSecond(n: number): number {
